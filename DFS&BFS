@@ -1,0 +1,127 @@
+BFS
+使用一个queue实现，每次循环对当前点临近的点，都推进队列中，然后就能根据队列来依次访问临近的点，直到队列中没有点为止。
+#include <iostream>
+#include <vector>
+#include <queue>
+
+#define N 5
+
+using namespace std;
+
+int mat[N][N] = {
+    { 0, 1, 1, 0, 0 },
+    { 0, 0, 1, 1, 0 },
+    { 0, 1, 1, 1, 0 },
+    { 1, 0, 0, 0, 0 },
+    { 0, 0, 1, 1, 0 }
+};
+
+vector<bool> visited;
+
+void BFS(int start) {
+    visited[start]= true;
+    cout<< "start: "<< start<< endl;
+    queue<int> q;
+    q.push(start);
+    while (!q.empty()) {
+        int front= q.front();
+        q.pop();
+        for (int i= 0; i< N; i++) {
+            if (!visited[i]&& mat[start][i]== 1) {
+                cout<< "visit: "<< i<< endl;
+                visited[i]= 1;
+                q.push(i);
+            }
+        }
+    }
+}
+
+int main() {
+    for (int i= 0; i< N; i++) {
+        visited.push_back(false);
+    }
+    for (int i= 0; i< N; i++) {
+        if (!visited[i]) {
+            cout<< "BFS:"<< endl; 
+            BFS(i);
+            cout<< endl;
+        }
+    }
+    return 0;
+}
+
+
+DFS
+递归：调用DFS调用，寻找当前临近的未访问的点，利用递归不断往下搜索。 
+非递归：利用一个stack，首先把start推进stack里面，然后循环每次找到当前stack top的临近的未访问的点，访问后，推进stack里面，以便下次循环进行深度搜索。需要注意的是，在找到一个临近的未访问的点后就要break，保证每次找到一个临近的未访问的点后就接下往更深处搜索，而不是找到当前点的第二个临近的未访问的点（变成BFS了）。
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <stack>
+
+#define N 5
+
+using namespace std;
+
+int mat[N][N] = {
+    { 0, 1, 1, 0, 0 },
+    { 0, 0, 1, 0, 0 },
+    { 0, 0, 1, 0, 0 },
+    { 1, 1, 0, 0, 1 },
+    { 0, 0, 1, 0, 0 }
+};
+
+vector<bool> visited;
+
+void DFS(int start) {
+    visited[start]= true;
+    cout<< "visit: "<< start<< endl;
+    for (int i= 0; i< N; i++) {
+        if (!visited[i]&& mat[start][i]== 1) {
+            DFS(i);
+        }
+    }
+}
+
+// Non recursion method
+void DFS_nr(int start) {
+    visited[start]= true;
+    cout<< "visit: "<< start<< endl;
+    stack<int> s;
+    s.push(start);
+    bool is_push;
+    while (!s.empty()) {
+        is_push= false;
+        int top= s.top();
+        for (int i= 0; i< N; i++) {
+            if (!visited[i]&& mat[top][i]) {
+                visited[i]= true;
+                cout<< "visit: "<< i<< endl;
+                s.push(i);
+                is_push= true;
+                break;
+            }
+        }
+        if (!is_push) {
+            s.pop();
+        }
+    }
+}
+
+int main() {
+    cout<< mat[0][1]<< endl;
+    for (int i= 0; i< N; i++) {
+        visited.push_back(false);
+    }
+    for (int i= 0; i< N; i++) {
+        if (!visited[i]) {
+            cout<< "DFS:"<< endl; 
+            DFS(i);
+//          cout<< "DFS_nr"<< endl;
+//          DFS_nr(i);
+            cout<< endl;
+        }
+    }
+    return 0;
+}
