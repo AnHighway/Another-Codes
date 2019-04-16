@@ -1,0 +1,111 @@
+
+// 连表的形式来储存；
+// 链表头为最早入表的节点，链表尾为最新的节点；
+struct MyListNode{
+	int key;
+	int val;
+	MyListNode* next;
+	MyListNode* pre;
+	MyListNode(int k, int v):key(k), val(v), next(NULL), pre(NULL){}
+};
+class LRUCache{
+public:
+ 
+	LRUCache(int capacity):cap(capacity), nodeNum(0), pHead(NULL), pTail(NULL) {
+	}
+ 
+	int get(int key) {
+		if(pHead == NULL)
+		{
+			return -1;
+		}
+		MyListNode* pNode = pHead;
+		while(pNode != NULL)
+		{
+			if(pNode->key == key)
+			{
+				int val = pNode->val;
+				DeleteFromList(pNode);
+				AddToList(pNode);
+				return val;
+			}
+			pNode = pNode->next;
+		}
+ 
+		return -1;
+	}
+ 
+	void set(int key, int value) {
+		MyListNode* pNode = pHead;
+		while(pNode != NULL)
+		{
+			if(pNode->key == key)
+			{
+				pNode->val = value;
+				DeleteFromList(pNode);
+				AddToList(pNode);
+				return;
+			}
+			pNode = pNode->next;
+		}
+ 
+		pNode = new MyListNode(key, value);
+		AddToList(pNode);
+	}
+	void AddToList(MyListNode* pNode){
+		if(nodeNum == cap)
+		{
+			MyListNode* pTmp = pHead;
+			pHead = pHead->next;
+			DeleteFromList(pTmp);
+			delete pTmp;
+			AddToList(pNode);
+		}
+		else
+		{
+			++nodeNum;
+			if(nodeNum == 1)
+			{
+				pHead = pNode;
+				pTail = pNode;
+			}
+			else
+			{
+				pTail->next = pNode;
+				pNode->pre = pTail;
+				pNode->next = NULL;
+				pTail = pNode;
+			}
+		}
+	}
+	void DeleteFromList(MyListNode* pNode){
+		MyListNode* pPre = pNode->pre;
+		MyListNode* pNext = pNode->next;
+		nodeNum--;
+		if(pPre == NULL)
+		{
+			pHead = pNext;
+		}
+		else
+		{
+			pPre->next = pNext;
+		}
+ 
+		if(pNext == NULL)
+		{
+			pTail = pPre;
+		}
+		else
+		{
+			pNext->pre = pPre;
+		}
+	}
+	MyListNode* pHead;
+	MyListNode* pTail;
+	int nodeNum;
+	int cap;
+};
+--------------------- 
+作者：littleway 
+来源：CSDN 
+原文：https://blog.csdn.net/tinyway/article/details/24536327 
