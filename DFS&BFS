@@ -27,7 +27,7 @@ void BFS(int start) {
         int front= q.front();
         q.pop();
         for (int i= 0; i< N; i++) {
-            if (!visited[i]&& mat[start][i]== 1) {
+            if (!visited[i]&& mat[front][i]== 1) {
                 cout<< "visit: "<< i<< endl;
                 visited[i]= 1;
                 q.push(i);
