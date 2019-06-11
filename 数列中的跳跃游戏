@@ -1,0 +1,88 @@
+给定一个非负整数数组，你最初位于数组的第一个位置。
+
+数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个位置。
+示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/jump-game
+
+
+解法 1：回溯 这是一个低效的解决方法。我们模拟从第一个位置跳到最后位置的所有方案。从第一个位置开始，模拟所有可以跳到的位置，
+然后从当前位置重复上述操作，当没有办法继续跳的时候，就回溯。
+bool my_canjump(vector<int>& nums,int pos)
+{
+  if(pos==nums.size()-1) return true;
+  int furstep=min(int(pos+nums[pos]),int(nums.size()-1));
+  for(int nextstep=pos+1;nextstep<=furstep;nextstep++）
+    {
+      if(my_canjump(nums,nextstep)
+        {
+          return true;
+        }
+    }
+  return false;
+}
+
+解法 2：回溯改良 一个快速的优化方法是我们可以从右到左的检查 nextposition ，理论上最坏的时间复杂度复杂度是一样的。
+但实际情况下，对于一些简单场景，这个代码可能跑得更快一些。直觉上，就是我们每次选择最大的步数去跳跃，这样就可以更快的到达终点。
+
+bool my_canjump(vector<int>& nums,int pos)
+{
+  if(pos==nums.size()-1) return true;
+  int furstep=min(int(pos+nums[pos]),int(nums.size()-1));
+  for(int nextstep=furstep;nextstep>pos;nextstep--）
+    {
+      if(my_canjump(nums,nextstep)
+        {
+          return true;
+        }
+    }
+  return false;
+}
+
+
+bool canjump(vector<int>& nums)
+{
+  if(nums.size()==0) return false;
+  if(num.size()==1) return true;
+  return my_canjump(nums,0);
+}
+这两种解法容易超出时间限制
+
+
+解法3：动态规划 利用一个mem数组来记录当前位置能否跳跃到最后
+ enum Index{good,bad,unknown};
+    bool canJump(vector<int>& nums)
+    {
+    vector<int>memo(nums.size());
+    for (int i = 0; i < memo.size(); i++) 
+    {
+         memo[i] =unknown;
+    }
+     memo[memo.size() - 1] = good;
+
+    for(int i = nums.size() - 2; i >= 0; i--) 
+    {
+        int furthestJump = min(int(i + nums[i]), int(nums.size() - 1));
+        for (int j = i + 1; j <= furthestJump; j++) 
+        {
+            if (memo[j] == good)
+                {
+                    memo[i] = good;
+                    break;
+                } 
+            }
+        }
+        return memo[0] == good;
+    }
