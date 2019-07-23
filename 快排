@@ -23,3 +23,53 @@ void QuickSort(int* h, int left, int right)
    QuickSort(h,left,i-1);
     QuickSort(h,j+1,right);
  }
+
+//另外一种快排
+#include <iostream>
+#include <vector>
+using namespace std;
+void swap(int &a,int &b)
+{
+	int temp=a;
+	a=b;
+	b=temp;
+}
+
+int partion(int left,int right,vector<int>&array)
+{
+	int pivot=array[right];
+	int i=left-1;
+	for(int j=left;j<right;j++)
+	{
+		if(array[j]<=pivot)
+		{
+			i++;
+			swap(array[i],array[j]);
+		}
+	}
+	swap(array[i+1],array[right]);
+	return i+1;
+}
+void quicksort(int left,int right,vector<int>&array)
+{
+	if(left<right)
+	{
+		int p=partion(left,right,array);
+		quicksort(left,p-1,array);
+		quicksort(p+1,right,array);
+	}
+	
+}
+
+
+
+int main()
+{
+	vector<int> array{1,5,2,8,12,3,6,7,20};
+	quicksort(0,array.size()-1,array);
+    for(int i=0;i<array.size();i++)
+	{
+		cout<<array[i]<<endl;
+	}
+    return 0;
+}
