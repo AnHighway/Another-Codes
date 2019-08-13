@@ -1,0 +1,70 @@
+题目描述
+请实现两个函数，分别用来序列化和反序列化二叉树
+
+二叉树的序列化是指：把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。
+序列化可以基于先序、中序、后序、层序的二叉树遍历方式来进行修改，序列化的结果是一个字符串，序列化时通过 某种符号表示空节点（#），以 ！ 
+表示一个结点值的结束（value!）。
+
+二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。
+
+class Solution {
+public:
+    
+    void serialize(TreeNode *root,string& str) 
+    {    
+        if(root==NULL)
+        {
+            str+='#';
+            return ;
+        }
+        string tmp=to_string(root->val);
+        str+=tmp;
+        str+='#';
+        serialize(root->left,str); //前序遍历序列化二叉树
+        serialize(root->right,str); 
+    }
+    
+    
+    char* Serialize(TreeNode *root) 
+    {    
+       if(root==NULL)return NULL;
+        string str;
+        serialize(root,str); 
+        char* result=new char[str.length()+1];
+        int i=0;
+        for(i;i<str.length();i++)
+        {
+            result[i]=str[i];
+        }
+        result[i]='!';
+        return result;
+    }
+    
+    TreeNode* deserialize(char** str)
+    {
+        if(**str == '#'){  //指向指针的指针，这样才不会创建临时对象，递归调用的时候才能一直用到
+                            //一定要用**str,
+            ++(*str);         //以保证得到递归后指针str指向未被读取的字符
+            return NULL;
+        }
+        int num = 0;
+        while(**str != '!' && **str != '#'){
+            num = num*10 + ((**str) - '0');
+            ++(*str);
+        }
+        TreeNode *root = new TreeNode(num);
+        if(**str == '!')
+            return root;
+        else
+            (*str)++;
+        root->left = deserialize(str);
+        root->right = deserialize(str);
+        return root;
+    }
+    
+    TreeNode* Deserialize(char* str) {
+        if(str==NULL)return NULL;
+        TreeNode*result=deserialize(&str);
+        return result;
+    }
+};
